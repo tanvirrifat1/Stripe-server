@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.afkplob.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
+
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -48,6 +48,12 @@ async function run() {
       const payment = req.body;
       const insertResult = await paymentCollection.insertOne(payment);
       res.send(insertResult);
+    });
+
+    app.get("/payment", async (req, res) => {
+      const query = {};
+      const payments = await paymentCollection.find(query).toArray();
+      res.send(payments);
     });
 
     await client.db("admin").command({ ping: 1 });
